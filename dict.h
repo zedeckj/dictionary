@@ -30,7 +30,7 @@ dict_t *new_dict_with_func(size_t capacity, ...);
 dict_t *new_dict(size_t capacity);
 							
 // Frees a dictionary and its entries pointer.
-void free_dict(dict_t *dict);
+void dict_free(dict_t *dict);
 
 // Performs a lookup of the given key on the dictionary. Returns 0 if not found. 
 char *dict_lookup(dict_t *dict, char *key);

@@ -11,6 +11,7 @@ int tests_ran = 0;
 	else tests_ran += 1; 
 #define assert_eq(x, y) assert(x && y && !strcmp(x, y))
 
+
 void test_basic() {
 	dict_t *dict = new_dict(100);	
 	assert(dict->length == 0);
@@ -21,7 +22,7 @@ void test_basic() {
 	assert(dict_remove(dict, "foo"));
 	assert(!dict_lookup(dict, "foo"));
 	assert(dict->length == 0);
-	free_dict(dict);
+	dict_free(dict);
 }
 
 void test_capacity() {
@@ -30,7 +31,7 @@ void test_capacity() {
 	assert(!dict_add(dict, "bananna", "pineapple"));
 	assert(dict_remove(dict, "apple"));
 	assert(dict_add(dict, "plum", "pineapple"));
-	free_dict(dict);
+	dict_free(dict);
 }
 
 void test_lots() {
@@ -57,7 +58,7 @@ void test_empty_remove() {
 	dict_t * dict = new_dict(10);
 	assert(!dict_remove(dict, "pan"));	
 	assert(dict->length == 0);
-	free_dict(dict);
+	dict_free(dict);
 }
 
 
@@ -71,7 +72,7 @@ void test_variadic() {
 	assert_eq(dict_lookup(dict, "foo"), "bar");
 	assert_eq(dict_lookup(dict, "baz"), "qux");
 	assert(dict->length == 2);
-	free_dict(dict);
+	dict_free(dict);
 }
 
 

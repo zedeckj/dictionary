@@ -46,7 +46,7 @@ dict_t *new_dict_with_func(size_t capacity, ...) {
 #define new_dict_with(capacity, ...) new_dictionary_function(capacity, ..., 0); 
 
 
-void free_dict(dict_t *dict) {
+void dict_free(dict_t *dict) {
 	free(dict->entries);
 	free(dict);
 }
