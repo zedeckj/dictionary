@@ -21,6 +21,7 @@ dict_t *new_dict(size_t capacity) {
 	if (!dict->is_occupied) return 0;
 	memset(dict->is_occupied, false, sizeof(bool) * capacity);
 	dict->capacity = capacity;
+	dict->length = 0;
 	return dict;
 }
 
@@ -85,6 +86,7 @@ bool dict_remove(dict_t *dict, char *key) {
 	size_t index;
 	if (dict_index_of(dict, key, &index)) {
 		dict->is_occupied[index] = false;
+		dict->length -= 1;
 		dict->entries[index].value = 0;
 		return true;
 	}
@@ -102,6 +104,7 @@ bool dict_add(dict_t *dict, char *key, char *value) {
 				new_entry.key = key;
 				new_entry.value = value;
 				new_entry.hash_val = hash;
+				dict->length += 1;
 				dict->is_occupied[check_index] = true;
 				dict->entries[check_index] = new_entry;
 				return true;					

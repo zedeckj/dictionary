@@ -14,12 +14,17 @@ typedef struct {
 
 typedef struct {
 		bool *is_occupied;
+		size_t length;
 		table_entry_t *entries;
 		size_t capacity;
 } dict_t;
 
 
+#define dict_with(capacity, ...) new_dict_with_func(capacity, __VA_ARGS__, 0)
 
+
+// Construct a dict with preset key value pairs. Call with `dict_with` macro
+dict_t *new_dict_with_func(size_t capacity, ...);
 
 // Allocates a new dictionary
 dict_t *new_dict(size_t capacity);
@@ -35,6 +40,7 @@ bool dict_add(dict_t *dict, char *key, char *value);
 
 // Returns true if remoing the given key was succesful. False if the key was not present.
 bool dict_remove(dict_t *dict, char *key); 
+
 
 
 #endif
