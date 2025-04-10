@@ -62,6 +62,13 @@ void test_empty_remove() {
 }
 
 
+void test_duplicate(){ 
+	dict_t *dict = new_dict(10);
+	assert(dict_add(dict, "florida", "orlando"));
+	assert(dict_add(dict, "florida", "miami"));		
+	assert_eq(dict_lookup(dict, "florida"), "miami");
+}
+
 void test_no_capacity() {
 	dict_t *dict = new_dict(0);
 	assert(!dict);
@@ -83,6 +90,7 @@ int main(int argc, char ** argv) {
 	test_empty_remove();
 	test_no_capacity();
 	test_variadic();
+	test_duplicate();
 	printf("All %d tests passed\n", tests_ran);
 	return 0;
 }
