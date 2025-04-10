@@ -1,2 +1,2 @@
 all:
-	cc *.c -o dict
+	cc *.c -o test

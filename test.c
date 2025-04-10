@@ -83,6 +83,16 @@ void test_variadic() {
 }
 
 
+void test_mem() {
+	dict_t *dict = new_dict(10);
+	char *str = malloc(10);
+	strcpy(str,"mallocd");
+	char *val = "val";
+	assert(dict_add(dict, str, val));
+	free(str);
+	assert_eq(dict_lookup(dict, "mallocd"), val);
+}
+
 int main(int argc, char ** argv) {
 	test_basic();
 	test_capacity();
@@ -91,6 +101,7 @@ int main(int argc, char ** argv) {
 	test_no_capacity();
 	test_variadic();
 	test_duplicate();
+	test_mem();
 	printf("All %d tests passed\n", tests_ran);
 	return 0;
 }
