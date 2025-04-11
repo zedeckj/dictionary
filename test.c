@@ -5,20 +5,22 @@ int tests_ran = 0;
 
 #define assert(x)\
 	if (!(x)) {\
-		fprintf(stderr, #x " is false\n");\
+		fprintf(stderr, "On line %d, " #x " is false", __LINE__);\
 		exit(1);\
 	}\
 	else tests_ran += 1; 
-#define assert_eq(x, y) assert(x && y && !strcmp(x, y))
+#define assert_eq(x, y) assert((!x && !y) || (x && y && !strcmp(x, y)))
 
 
 void test_basic() {
 	dict_t *dict = new_dict(100);	
 	assert(dict->length == 0);
+	assert(!dict->retrieved);
 	assert(!dict_lookup(dict,"foo"));		
 	assert(dict_add(dict, "foo", "bar"));
 	assert(dict->length == 1);
 	assert_eq(dict_lookup(dict, "foo"), "bar");
+	assert_eq(dict->retrieved, "bar");
 	assert(dict_remove(dict, "foo"));
 	assert(!dict_lookup(dict, "foo"));
 	assert(dict->length == 0);
@@ -51,6 +53,7 @@ void test_lots() {
 		sprintf(temp_key, "key %d", i); 
 		sprintf(temp_val, "val %d", i); 
 		assert_eq(dict_lookup(dict, temp_key), temp_val);
+		assert_eq(dict->retrieved, temp_val);
 	}
 }
 

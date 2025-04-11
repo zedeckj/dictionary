@@ -22,6 +22,7 @@ dict_t *new_dict(size_t capacity) {
 	memset(dict->is_occupied, false, sizeof(bool) * capacity);
 	dict->capacity = capacity;
 	dict->length = 0;
+	dict->retrieved = 0;
 	return dict;
 }
 
@@ -60,6 +61,7 @@ void dict_free(dict_t *dict) {
 			freed += 1;
 		}
 	}
+	free(dict->retrieved);
 	free(dict->entries);
 	free(dict);
 }
@@ -87,24 +89,43 @@ bool dict_index_of(dict_t *dict, char *key, size_t hash, size_t *index_out) {
 	return false;	
 }
 
+
+void update_last_retrieved(dict_t *dict, char *val) {
+	if (dict->retrieved) {
+		free(dict->retrieved);
+	}
+	if (val) {
+		dict->retrieved = malloc(strlen(val) + 1);
+		strcpy(dict->retrieved, val);
+	}
+	else dict->retrieved = 0;
+}
+
+
+
 char *dict_lookup(dict_t *dict, char *key) {
 	size_t index;
 	size_t hash = dict_hash(key);
 	if (dict_index_of(dict, key, hash, &index)) {
-		return dict->entries[index].value;
+		update_last_retrieved(dict,dict->entries[index].value); 
+		return dict->retrieved;
 	}
 	return 0;	
 }
 
 
-bool dict_remove(dict_t *dict, char *key) {
+char *dict_remove(dict_t *dict, char *key) {
 	size_t index;
 	size_t hash = dict_hash(key);
 	if (dict_index_of(dict, key, hash, &index)) {
 		dict->is_occupied[index] = false;
 		dict->length -= 1;
-		dict->entries[index].value = 0;
-		return true;
+
+		char *val = dict->entries[index].value;
+		update_last_retrieved(dict,val); 
+		free_entry(dict, index);	
+		
+		return dict->retrieved;
 	}
 	return false;	
 }

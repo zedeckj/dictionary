@@ -17,6 +17,8 @@ typedef struct {
 		size_t length;
 		table_entry_t *entries;
 		size_t capacity;
+		// Initialized to 0, points to the last retrieved value
+		char *retrieved;
 } dict_t;
 
 
@@ -38,8 +40,10 @@ char *dict_lookup(dict_t *dict, char *key);
 // Returns true if adding the given key value pair was succseful
 bool dict_add(dict_t *dict, char *key, char *value);
 
-// Returns true if remoing the given key was succesful. False if the key was not present.
-bool dict_remove(dict_t *dict, char *key); 
+// Returns the removed value if the given key was succesful. 0 if the key was not present.
+char *dict_remove(dict_t *dict, char *key); 
+
+
 
 
 
