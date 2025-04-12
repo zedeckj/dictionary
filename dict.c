@@ -32,7 +32,7 @@ dict_t *new_dict_with_func(size_t capacity, ...) {
 	if (!dict) return 0;
 	va_list args;
 	va_start(args, capacity);
-	for (int i = 0; i < capacity; i += 2) {
+	for (size_t i = 0; i < capacity; i += 2) {
 		char *key = va_arg(args, char *);
 		if (!key) return dict;
 		else {
@@ -55,7 +55,7 @@ void free_entry(dict_t *dict, size_t i) {
 
 void dict_free(dict_t *dict) {
 	size_t freed = 0;
-	for (int i = 0; i < dict->capacity && freed < dict->length; i++) {
+	for (size_t i = 0; i < dict->capacity && freed < dict->length; i++) {
 		if (dict->is_occupied[i]) {
 			free_entry(dict, i);
 			freed += 1;

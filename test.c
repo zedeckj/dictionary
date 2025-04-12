@@ -96,7 +96,7 @@ void test_mem() {
 	assert_eq(dict_lookup(dict, "mallocd"), val);
 }
 
-int main(int argc, char ** argv) {
+int main() {
 	test_basic();
 	test_capacity();
 	test_lots();
