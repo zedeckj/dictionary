@@ -49,8 +49,6 @@ dict_t *new_dict_with_func(size_t capacity, ...) {
 
 void free_entry(dict_t *dict, size_t i) {
 	free(dict->entries[i].key);
-	free(dict->entries[i].value);
-	
 }
 
 void dict_free(dict_t *dict) {
@@ -103,7 +101,7 @@ void update_last_retrieved(dict_t *dict, char *val) {
 
 
 
-char *dict_lookup(dict_t *dict, char *key) {
+void *dict_lookup(dict_t *dict, char *key) {
 	size_t index;
 	size_t hash = dict_hash(key);
 	if (dict_index_of(dict, key, hash, &index)) {
@@ -121,7 +119,7 @@ char *dict_remove(dict_t *dict, char *key) {
 		dict->is_occupied[index] = false;
 		dict->length -= 1;
 
-		char *val = dict->entries[index].value;
+		void *val = dict->entries[index].value;
 		update_last_retrieved(dict,val); 
 		free_entry(dict, index);	
 		
@@ -130,19 +128,18 @@ char *dict_remove(dict_t *dict, char *key) {
 	return false;	
 }
 
-void add_entry_helper(dict_t *dict, char *key, char *value, size_t index, size_t hash) {
+void add_entry_helper(dict_t *dict, char *key, void *value, size_t index, size_t hash) {
 	table_entry_t new_entry;
 	new_entry.key = malloc(strlen(key) + 1);
-	new_entry.value = malloc(strlen(value) + 1);	
 	strcpy(new_entry.key, key);
-	strcpy(new_entry.value, value);
+	new_entry.value = value;
 	new_entry.hash_val = hash;
 	dict->is_occupied[index] = true;
 	dict->entries[index] = new_entry;
 	dict->length += 1;
 }
 
-bool dict_add(dict_t *dict, char *key, char *value) {
+bool dict_add(dict_t *dict, char *key, void *value) {
 	if (dict) {
 		size_t old_index;
 		size_t hash = dict_hash(key);

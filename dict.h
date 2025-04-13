@@ -8,7 +8,7 @@
 
 typedef struct {
 	char *key;
-	char *value;
+	void *value;
 	size_t hash_val;
 } table_entry_t;
 
@@ -22,29 +22,32 @@ typedef struct {
 } dict_t;
 
 
-#define dict_with(capacity, ...) new_dict_with_func(capacity, __VA_ARGS__, 0)
 
+#define dict_with(capacity, ...) new_dict_with_func(capacity, __VA_ARGS__, 0)
 
 // Construct a dict with preset key value pairs. Call with `dict_with` macro
 dict_t *new_dict_with_func(size_t capacity, ...);
 
 // Allocates a new dictionary
 dict_t *new_dict(size_t capacity);
-							
+
+
 // Frees a dictionary and its entries pointer.
 void dict_free(dict_t *dict);
 
 // Performs a lookup of the given key on the dictionary. Returns 0 if not found. 
-char *dict_lookup(dict_t *dict, char *key);
+void *dict_lookup(dict_t *dict, char *key);
 
 // Returns true if adding the given key value pair was succseful
-bool dict_add(dict_t *dict, char *key, char *value);
+bool dict_add(dict_t *dict, char *key, void *value);
 
 // Returns the removed value if the given key was succesful. 0 if the key was not present.
 char *dict_remove(dict_t *dict, char *key); 
 
 
-
-
-
+/* A note about memory management:
+ * Dict keys are copied into the dictionary's own allocated char *, but values
+ * are not copied and left as references. Don't free a value in a diciontary 
+ * if you want to retrieve it later.
+ */
 #endif
