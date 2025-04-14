@@ -47,15 +47,12 @@ dict_t *new_dict_with_func(size_t capacity, ...) {
 #define new_dict_with(capacity, ...) new_dictionary_function(capacity, ..., 0); 
 
 
-void free_entry(dict_t *dict, size_t i) {
-	free(dict->entries[i].key);
-}
 
 void dict_free(dict_t *dict) {
 	size_t freed = 0;
 	for (size_t i = 0; i < dict->capacity && freed < dict->length; i++) {
 		if (dict->is_occupied[i]) {
-			free_entry(dict, i);
+			free(dict->entries[i].key);
 			freed += 1;
 		}
 	}
@@ -64,6 +61,19 @@ void dict_free(dict_t *dict) {
 	free(dict);
 }
 
+void dict_free_all(dict_t *dict) {
+	size_t freed = 0;
+	for (size_t i = 0; i < dict->capacity && freed < dict->length; i++) {
+		if (dict->is_occupied[i]) {
+			free(dict->entries[i].key);
+			free(dict->entries[i].value);
+			freed += 1;
+		}
+	}
+	free(dict->retrieved);
+	free(dict->entries);
+	free(dict);
+}
 
 
 
@@ -112,17 +122,15 @@ void *dict_lookup(dict_t *dict, char *key) {
 }
 
 
-char *dict_remove(dict_t *dict, char *key) {
+void *dict_remove(dict_t *dict, char *key) {
 	size_t index;
 	size_t hash = dict_hash(key);
 	if (dict_index_of(dict, key, hash, &index)) {
 		dict->is_occupied[index] = false;
 		dict->length -= 1;
-
 		void *val = dict->entries[index].value;
 		update_last_retrieved(dict,val); 
-		free_entry(dict, index);	
-		
+		free(dict->entries[index].key);
 		return dict->retrieved;
 	}
 	return false;	
@@ -144,7 +152,7 @@ bool dict_add(dict_t *dict, char *key, void *value) {
 		size_t old_index;
 		size_t hash = dict_hash(key);
 		if (dict_index_of(dict, key, hash, &old_index)) {
-			free_entry(dict, old_index);
+			free(dict->entries[old_index].key);
 			add_entry_helper(dict, key, value, old_index, hash);
 			return true;
 		}

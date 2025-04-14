@@ -18,7 +18,7 @@ typedef struct {
 		table_entry_t *entries;
 		size_t capacity;
 		// Initialized to 0, points to the last retrieved value
-		char *retrieved;
+		void *retrieved;
 } dict_t;
 
 
@@ -32,8 +32,9 @@ dict_t *new_dict_with_func(size_t capacity, ...);
 dict_t *new_dict(size_t capacity);
 
 
-// Frees a dictionary and its entries pointer.
+// Frees a dictionary and its keys.
 void dict_free(dict_t *dict);
+
 
 // Performs a lookup of the given key on the dictionary. Returns 0 if not found. 
 void *dict_lookup(dict_t *dict, char *key);
@@ -42,12 +43,17 @@ void *dict_lookup(dict_t *dict, char *key);
 bool dict_add(dict_t *dict, char *key, void *value);
 
 // Returns the removed value if the given key was succesful. 0 if the key was not present.
-char *dict_remove(dict_t *dict, char *key); 
+void *dict_remove(dict_t *dict, char *key); 
 
 
 /* A note about memory management:
  * Dict keys are copied into the dictionary's own allocated char *, but values
  * are not copied and left as references. Don't free a value in a diciontary 
- * if you want to retrieve it later.
+ * if you want to retrieve it later. If the only references to these values
+ * are in the dictionary, the following is provided for convience
  */
+
+// Frees both the values, keys, and dictionary itself. Should only be used when all values have been allocated by the caller
+void dict_free_all(dict_t *dict);
+
 #endif
