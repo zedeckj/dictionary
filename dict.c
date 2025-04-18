@@ -161,3 +161,17 @@ bool dict_add(dict_t *dict, char *key, void *value) {
 }
 
 
+void **dict_values(dict_t *dict) {
+	if (dict) {
+		void **out = malloc(sizeof(void *) * dict->capacity);
+		size_t j = 0;
+		for (size_t i = 0; i < dict->capacity; i++){ 
+			if (dict->is_occupied[i]) {
+				out[j] = dict->entries[i].value;
+			}
+		}
+		return out;
+	}
+	return 0;
+}
+
