@@ -60,21 +60,6 @@ void dict_free(dict_t *dict) {
 	free(dict);
 }
 
-void dict_free_all(dict_t *dict) {
-	size_t freed = 0;
-	for (size_t i = 0; i < dict->capacity && freed < dict->length; i++) {
-		if (dict->is_occupied[i]) {
-			free(dict->entries[i].key);
-			free(dict->entries[i].value);
-			freed += 1;
-		}
-	}
-	free(dict->retrieved);
-	free(dict->entries);
-	free(dict);
-}
-
-
 
 // Checks if the provided index has an entry that matches the given key and hash
 bool is_matching_entry(dict_t *dict, char *key, size_t index, size_t hash) {
@@ -160,6 +145,20 @@ bool dict_add(dict_t *dict, char *key, void *value) {
 	return false;	
 }
 
+
+char **dict_keys(dict_t *dict) {
+	if (dict) {
+		char **out = malloc(sizeof(char *) * dict->length);
+		size_t j = 0;
+		for (size_t i = 0; i < dict->capacity; i++){ 
+			if (dict->is_occupied[i]) {
+				out[j++] = dict->entries[i].value;
+			}
+		}
+		return out;
+	}
+	return 0;
+}
 
 void **dict_values(dict_t *dict) {
 	if (dict) {
