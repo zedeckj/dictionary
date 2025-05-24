@@ -45,9 +45,11 @@ bool dict_add(dict_t *dict, char *key, void *value);
 // Returns the removed value if the given key was succesful. 0 if the key was not present.
 void *dict_remove(dict_t *dict, char *key); 
 
-// Returns an array of pointers to the values in this dictionary. The length of this array is the same as dict_t::length
+// Returns an array of pointers to the values in this dictionary. The length of this array is the same as dict_t.length
 void **dict_values(dict_t *dict);
 
+// Returns an array of pointers to the keys in this dictionary. The length of this array is the same as dict_t.length
+char **dict_keys(dict_t *dict);
 
 /* A note about memory management:
  * Dict keys are copied into the dictionary's own allocated char *, but values
