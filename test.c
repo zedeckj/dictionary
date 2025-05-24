@@ -30,7 +30,9 @@ void test_basic() {
 void test_capacity() {
 	dict_t *dict = new_dict(1);
 	assert(dict_add(dict, "apple", "pear"));
-	assert(!dict_add(dict, "bananna", "pineapple"));
+	assert(dict_add(dict, "bananna", "pineapple"));
+	assert(dict->length == 2);
+	assert(dict->capacity == 2);
 	assert(dict_remove(dict, "apple"));
 	assert(dict_add(dict, "plum", "pineapple"));
 	dict_free(dict);
@@ -38,7 +40,7 @@ void test_capacity() {
 
 void test_lots() {
 	#define COUNT 1000
-	dict_t *dict = new_dict(COUNT);
+	dict_t *dict = new_dict(1);
 	char key_bufs[COUNT][10];
 	char val_bufs[COUNT][10];
 	for (int i = 0; i < COUNT; i++) {
@@ -78,7 +80,7 @@ void test_no_capacity() {
 }
 
 void test_variadic() {
-	dict_t *dict = dict_with(10, "foo", "bar", "baz", "qux");
+	dict_t *dict = new_dict_with(10, "foo", "bar", "baz", "qux");
 	assert_eq(dict_lookup(dict, "foo"), "bar");
 	assert_eq(dict_lookup(dict, "baz"), "qux");
 	assert(dict->length == 2);

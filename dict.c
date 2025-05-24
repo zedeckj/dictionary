@@ -27,6 +27,17 @@ dict_t *new_dict(size_t capacity) {
 }
 
 
+static bool dict_grow(dict_t *dict, size_t new_capacity) {
+	table_entry_t *new_entries = realloc(dict->entries, sizeof(table_entry_t) * new_capacity);
+	if (!new_entries) return false;
+	else dict->entries = new_entries;
+	bool *is_occ = realloc(dict->is_occupied, new_capacity);
+	if (!is_occ) return false;
+	else dict->is_occupied = is_occ;
+	dict->capacity = new_capacity;
+	return true;
+}
+
 dict_t *new_dict_with_func(size_t capacity, ...) {
 	dict_t *dict = new_dict(capacity);
 	if (!dict) return 0;
@@ -34,17 +45,19 @@ dict_t *new_dict_with_func(size_t capacity, ...) {
 	va_start(args, capacity);
 	for (size_t i = 0; i < capacity; i += 2) {
 		char *key = va_arg(args, char *);
-		if (!key) return dict;
+		if (!key) goto ret;
 		else {
 			char *value = va_arg(args, char *);
-			if (!value) return 0;
+			if (!value){
+				goto ret;
+			}
 			dict_add(dict, key, value);
 		}
 	}	
-	return 0;
+	ret:
+	va_end(args);
+	return dict;
 }
-
-#define new_dict_with(capacity, ...) new_dictionary_function(capacity, ..., 0); 
 
 
 
@@ -141,6 +154,7 @@ void add_entry_helper(dict_t *dict, char *key, void *value, size_t index, size_t
 
 bool dict_add(dict_t *dict, char *key, void *value) {
 	if (dict) {
+		if (dict->length == dict->capacity) dict_grow(dict, dict->capacity * 2);
 		size_t old_index;
 		size_t hash = dict_hash(key);
 		if (dict_index_of(dict, key, hash, &old_index)) {
@@ -155,7 +169,9 @@ bool dict_add(dict_t *dict, char *key, void *value) {
 				add_entry_helper(dict, key, value, check_index, hash);
 				return true;					
 			}
-		} while ((check_index = (check_index + 1) % dict->capacity), check_index != trunc_hash);
+		} 
+		while ((check_index = (check_index + 1) % dict->capacity), check_index != trunc_hash);
+		
 	} 
 	return false;	
 }
